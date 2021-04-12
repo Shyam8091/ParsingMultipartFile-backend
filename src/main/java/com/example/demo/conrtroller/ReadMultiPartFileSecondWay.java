@@ -32,7 +32,6 @@ public class ReadMultiPartFileSecondWay {
 	 */
 	@GetMapping("/readMultipartFileSecondWay")
 	public ResponseEntity<Map<String, Integer>> readMultipartFile(@RequestParam(required = false) MultipartFile file) {
-		System.out.println("called");
 		if (!(file instanceof MultipartFile)) {
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			map.put("File Not Found ", 400);
