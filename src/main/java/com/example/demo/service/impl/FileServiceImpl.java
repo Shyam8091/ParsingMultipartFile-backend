@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -22,6 +24,11 @@ public class FileServiceImpl implements FileService {
 	int indexOfAge = 0;
 	int indexOfMobileNumber = 0;
 
+	/**
+	 * this method read the CSV file using Scanner and find the index of each
+	 * desired header column I will recommend the readMultipartFileSecondWay method
+	 * as that uses Collection
+	 */
 	@Override
 	public Map<String, Integer> readMultipartFileFirstWay(MultipartFile file) {
 		try {
@@ -49,6 +56,34 @@ public class FileServiceImpl implements FileService {
 			String[] rowDataArray = rowData.split(",");
 			System.out.println("FirstName : " + rowDataArray[indexOfFirstName] + " Age : " + rowDataArray[indexOfAge]);
 			hashMap.put(rowDataArray[indexOfFirstName], Integer.parseInt(rowDataArray[indexOfAge]));
+		}
+		scanner.close();
+		return hashMap;
+	}
+
+	@Override
+	public Map<String, Integer> readMultipartFileSecondWay(MultipartFile file) {
+		try {
+			scanner = new Scanner(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		/**
+		 * If we have any special character in header we can replace it using regex
+		 * String uploadedFileRowData = scanner.nextLine().replaceAll("\\.", "_");
+		 */
+
+		String uploadedFileRowData = scanner.nextLine();
+		String[] uploadedFileRowDataArray = uploadedFileRowData.split(",");
+		ArrayList<String> arrayListOfHeader = new ArrayList<String>(Arrays.asList(uploadedFileRowDataArray));
+		while (scanner.hasNext()) {
+			StringBuilder rowData = new StringBuilder(scanner.nextLine());
+			String[] rowDataArray = rowData.toString().split(",");
+			System.out.println("FirstName : " + rowDataArray[arrayListOfHeader.indexOf("FirstName")] + " Age : "
+					+ rowDataArray[arrayListOfHeader.indexOf("Age")]);
+			hashMap.put(rowDataArray[arrayListOfHeader.indexOf("FirstName")],
+					Integer.parseInt(rowDataArray[arrayListOfHeader.indexOf("Age")]));
 		}
 		scanner.close();
 		return hashMap;
